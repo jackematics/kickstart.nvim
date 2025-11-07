@@ -92,12 +92,16 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 
 vim.opt.shiftwidth = 2
 
+vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { desc = 'Move line down' })
+vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move line up' })
+
+vim.keymap.set('v', '<A-j>', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
+vim.keymap.set('v', '<A-k>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
+
 -- WARN: TERMINAL MODE CONFIG
 --
 local terminal_buffer_id
-vim.keymap.set('n', '<space>st', function()
-  print('cheese', terminal_buffer_id)
-
+vim.keymap.set('n', '<leader>st', function()
   -- no terminal buffer -> create a new window at the bottom in terminal mode
   if terminal_buffer_id == nil then
     vim.cmd.vnew()
@@ -128,7 +132,16 @@ vim.keymap.set('n', '<space>st', function()
       vim.api.nvim_win_close(win, true)
     end
   end
-end)
+end, { desc = '[S]how [T]erminal' })
+
+-- Keymap is here instead of above because I want it to ignore the terminal buffer if it exists
+vim.keymap.set('n', '<leader>B', function()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.fn.bufwinnr(buf) == -1 and vim.api.nvim_buf_is_loaded(buf) and buf ~= terminal_buffer_id then
+      vim.api.nvim_buf_delete(buf, { force = true })
+    end
+  end
+end, { desc = 'Delete unused buffers' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
