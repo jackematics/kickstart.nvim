@@ -453,7 +453,16 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         ts_ls = { capabilities = capabilities },
-        prettier = {},
+        prettier = {
+          command = function(ctx)
+            local local_prettier = ctx.cwd .. '/node_modules/.bin/prettier'
+            if vim.fn.executable(local_prettier) == 1 then
+              return local_prettier
+            end
+
+            return 'prettier'
+          end,
+        },
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -544,7 +553,6 @@ require('lazy').setup({
         javascript = { 'prettier', stop_after_first = true },
         json = { 'prettier', stop_after_first = true },
       },
-    },
   },
   { -- Autocompletion
     'saghen/blink.cmp',
