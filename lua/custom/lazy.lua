@@ -553,6 +553,7 @@ require('lazy').setup({
         javascript = { 'prettier', stop_after_first = true },
         json = { 'prettier', stop_after_first = true },
       },
+    },
   },
   { -- Autocompletion
     'saghen/blink.cmp',
