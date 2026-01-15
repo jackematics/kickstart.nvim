@@ -123,7 +123,7 @@ require('lazy').setup({
       spec = {
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>G', group = '[G]it hunk', mode = { 'n', 'v' } },
       },
     },
   },
@@ -193,6 +193,11 @@ require('lazy').setup({
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
+          },
+        },
+        pickers = {
+          find_files = {
+            hidden = true,
           },
         },
       }
@@ -453,16 +458,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         ts_ls = { capabilities = capabilities },
-        prettier = {
-          command = function(ctx)
-            local local_prettier = ctx.cwd .. '/node_modules/.bin/prettier'
-            if vim.fn.executable(local_prettier) == 1 then
-              return local_prettier
-            end
-
-            return 'prettier'
-          end,
-        },
+        prettier = {},
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -544,6 +540,12 @@ require('lazy').setup({
           }
         end
       end,
+      formatters = {
+        prettier = {
+          command = 'prettier',
+          args = { '--stdin-filepath', '$FILENAME' },
+        },
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
@@ -551,7 +553,11 @@ require('lazy').setup({
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'prettier', stop_after_first = true },
+        typescript = { 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettier', stop_after_first = true },
         json = { 'prettier', stop_after_first = true },
+        markdown = { 'prettier', stop_after_first = true },
       },
     },
   },

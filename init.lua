@@ -98,51 +98,6 @@ vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move line up' })
 vim.keymap.set('v', '<A-j>', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
 vim.keymap.set('v', '<A-k>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
 
--- WARN: TERMINAL MODE CONFIG
---
-local terminal_buffer_id
-vim.keymap.set('n', '<leader>st', function()
-  -- no terminal buffer -> create a new window at the bottom in terminal mode
-  if terminal_buffer_id == nil then
-    vim.cmd.vnew()
-    vim.cmd.term()
-    vim.cmd.wincmd 'J'
-    vim.api.nvim_win_set_height(0, 20)
-    terminal_buffer_id = vim.api.nvim_get_current_buf()
-    return
-  end
-
-  -- get all windows pointing at the terminal buffer
-  local terminal_windows = {}
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == terminal_buffer_id then
-      table.insert(terminal_windows, win)
-    end
-  end
-
-  -- no open windows pointing at the buffer -> open one and point at the buffer
-  if #terminal_windows == 0 then
-    vim.cmd.vnew()
-    vim.cmd.wincmd 'J'
-    vim.api.nvim_win_set_height(0, 20)
-    vim.api.nvim_set_current_buf(terminal_buffer_id)
-  else
-    -- Otherwise close all windows pointing at the buffer
-    for _, win in ipairs(terminal_windows) do
-      vim.api.nvim_win_close(win, true)
-    end
-  end
-end, { desc = '[S]how [T]erminal' })
-
--- Keymap is here instead of above because I want it to ignore the terminal buffer if it exists
-vim.keymap.set('n', '<leader>B', function()
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.fn.bufwinnr(buf) == -1 and vim.api.nvim_buf_is_loaded(buf) and buf ~= terminal_buffer_id then
-      vim.api.nvim_buf_delete(buf, { force = true })
-    end
-  end
-end, { desc = 'Delete unused buffers' })
-
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -180,6 +135,17 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.hl.on_yank()
+  end,
+})
+
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    -- Get the current working directory and extract the last part
+    local cwd = vim.fn.getcwd()
+    local folder = vim.fn.fnamemodify(cwd, ':t')
+    -- Set the terminal title to the folder name
+    vim.o.title = true
+    vim.o.titlestring = folder
   end,
 })
 
