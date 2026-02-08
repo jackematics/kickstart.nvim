@@ -473,6 +473,9 @@ require('lazy').setup({
             },
           },
         },
+        clangd = {
+          capabilities = capabilities,
+        },
       }
 
       -- Ensure the servers and tools above are installed
