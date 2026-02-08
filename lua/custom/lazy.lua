@@ -658,6 +658,8 @@ require('lazy').setup({
         },
       }
       vim.cmd.colorscheme 'tokyonight-night'
+      vim.api.nvim_set_hl(0, 'Comment', { fg = '#6A9955' })
+      vim.api.nvim_set_hl(0, 'DiagnosticUnnecessary', { fg = '#7A7A7A' })
     end,
   },
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
