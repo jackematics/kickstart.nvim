@@ -263,7 +263,6 @@ require('lazy').setup({
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
       -- Mason must be loaded before its dependents so we need to set it up here.
-      -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
       { 'mason-org/mason.nvim', opts = { ensure_installed = { 'prettier' } } },
       'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
@@ -275,10 +274,6 @@ require('lazy').setup({
       'saghen/blink.cmp',
     },
     config = function()
-      -- Brief aside: **What is LSP?**
-      --
-      -- LSP is an initialism you've probably heard, but might not understand what it is.
-      --
       -- LSP stands for Language Server Protocol. It's a protocol that helps editors
       -- and language tooling communicate in a standardized fashion.
       --
@@ -458,6 +453,8 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         ts_ls = { capabilities = capabilities },
+        pyright = { capabilities = capabilities },
+        gopls = { capabilities = capabilities },
         prettier = {},
         lua_ls = {
           -- cmd = { ... },
@@ -494,6 +491,11 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'isort', -- Used to sort Python imports
+        'black', -- Used to format Python code
+        'clang-format', -- Used to format C/C++ code
+        'goimports', -- Used to format Go imports and code
+        'gofumpt', -- Used to format Go code with stricter style
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -533,7 +535,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = {}
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
         else
@@ -550,11 +552,13 @@ require('lazy').setup({
         },
       },
       formatters_by_ft = {
-        lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
         -- You can use 'stop_after_first' to run the first available formatter from the list
+        lua = { 'stylua' },
+        c = { 'clang-format' },
+        cpp = { 'clang-format' },
+        go = { 'goimports', 'gofumpt' },
+        python = { 'isort', 'black' },
         javascript = { 'prettier', stop_after_first = true },
         typescript = { 'prettier', stop_after_first = true },
         javascriptreact = { 'prettier', stop_after_first = true },
@@ -586,12 +590,17 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+
+              local luasnip = require 'luasnip'
+              luasnip.filetype_extend('typescript', { 'javascript' })
+              luasnip.filetype_extend('javascriptreact', { 'javascript' })
+              luasnip.filetype_extend('typescriptreact', { 'javascript' })
+            end,
+          },
         },
         opts = {},
       },
