@@ -149,6 +149,57 @@ vim.api.nvim_create_autocmd('VimEnter', {
   end,
 })
 
+vim.api.nvim_create_autocmd('TextChangedI', {
+  desc = 'Change js string to a backtick string when attempting to interpolate',
+  callback = function()
+    local current_file_ext = vim.fn.expand '%:e'
+
+    if not (current_file_ext == 'js' or current_file_ext == 'ts') then
+      return
+    end
+
+    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+    local row = cursor_pos[1] - 1
+    local col = cursor_pos[2]
+
+    -- "${" is the shortest possible length this line could be for this to work
+    if col < 3 then
+      return
+    end
+
+    local line = vim.fn.getline '.'
+    local last_two_chars = line:sub(col - 1, col)
+    if last_two_chars ~= '${' then
+      return
+    end
+
+    local quote_chars = { '"', "'" }
+
+    local col0 = -1
+    local coln = -1
+
+    local up_to_cursor = line:sub(1, col - 1)
+    local after_cursor = line:sub(col + 1)
+
+    for _, char in ipairs(quote_chars) do
+      col0 = vim.fn.strridx(up_to_cursor, char)
+      coln = vim.fn.stridx(after_cursor, char)
+
+      if col0 ~= -1 and coln ~= -1 then
+        coln = col + coln
+        break
+      end
+    end
+
+    --${ is not between two string characters
+    if col0 == -1 or coln == -1 then
+      return
+    end
+
+    vim.api.nvim_buf_set_text(0, row, col0, row, col0 + 1, { '`' })
+    vim.api.nvim_buf_set_text(0, row, coln, row, coln + 1, { '`' })
+  end,
+})
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 --
