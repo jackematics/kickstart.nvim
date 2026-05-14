@@ -139,6 +139,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 vim.api.nvim_create_autocmd('VimEnter', {
+  desc = 'Sets the title of the terminal window to be the project that you nvim into',
   callback = function()
     -- Get the current working directory and extract the last part
     local cwd = vim.fn.getcwd()
@@ -149,6 +150,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
   end,
 })
 
+-- Autobacktick
 vim.api.nvim_create_autocmd('TextChangedI', {
   desc = 'Change js string to a backtick string when attempting to interpolate',
   callback = function()
@@ -200,6 +202,7 @@ vim.api.nvim_create_autocmd('TextChangedI', {
     vim.api.nvim_buf_set_text(0, row, coln, row, coln + 1, { '`' })
   end,
 })
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 --

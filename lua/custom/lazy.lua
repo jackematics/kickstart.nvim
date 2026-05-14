@@ -327,6 +327,13 @@ require('lazy').setup({
           --  Useful when your language has ways of declaring types without an actual implementation.
           map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 
+          -- Open a vertical pane at the implementation of the word under your cursor
+          vim.keymap.set('n', 'grv', function()
+            vim.cmd 'vsplit'
+            vim.cmd 'wincmd l'
+            require('telescope.builtin').lsp_implementations()
+          end)
+
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
