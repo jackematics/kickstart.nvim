@@ -698,12 +698,6 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
-      -- NOTE: non-intrusive file tree navigation
-      require('mini.files').setup()
-      vim.keymap.set('n', '<space>e', function()
-        require('mini.files').open()
-      end, { desc = 'Open mini.files' })
-
       local statusline = require 'mini.statusline'
       ---@diagnostic disable-next-line: duplicate-set-field
       statusline.section_location = function()
@@ -751,6 +745,18 @@ require('lazy').setup({
   -- Or use telescope!
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
+
+  {
+    'simonmclean/triptych.nvim',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons', -- optional for icons
+      'antosha417/nvim-lsp-file-operations', -- optional LSP integration
+    },
+    opts = {}, -- config options here
+    keys = {
+      { '<space>e', ':Triptych<CR>' },
+    },
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
