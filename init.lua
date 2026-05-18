@@ -1,3 +1,6 @@
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
 require 'custom.lazy'
 --
 --  NOTE: MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
@@ -7,9 +10,6 @@ require 'custom.lazy'
 --
 --
 -- WARN: KEYBIND PREFERENCES
-
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
 
 vim.g.have_nerd_font = false
 
