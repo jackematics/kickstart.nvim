@@ -705,19 +705,44 @@ require('lazy').setup({
       end
     end,
   },
-  { -- Highlight, edit, and navigate code
-    build = ':TSUpdate',
+  {
     'nvim-treesitter/nvim-treesitter',
-    main = 'nvim-treesitter.configs',
+    branch = 'main',
+    lazy = true,
+    event = { 'BufReadPost', 'BufNewFile' },
+    build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'javascript', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'typescript', 'vim', 'vimdoc' },
-      auto_install = true,
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = { 'ruby' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'javascript',
+        'jsdoc',
+        'json',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'python',
+        'query',
+        'regex',
+        'toml',
+        'tsx',
+        'typescript',
+        'vim',
+        'vimdoc',
+        'xml',
+        'yaml',
       },
-      indent = { enable = true, disable = { 'ruby' } },
     },
+    config = function(_, opts)
+      local ts = require 'nvim-treesitter'
+
+      ts.setup(opts)
+
+      ts.install(opts.ensure_installed)
+    end,
   },
   {
     'esmuellert/nvim-eslint',
