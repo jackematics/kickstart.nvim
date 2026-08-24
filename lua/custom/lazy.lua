@@ -771,14 +771,20 @@ require('lazy').setup({
   -- you can continue same window with `<space>sr` which resumes last telescope search
 
   {
-    'simonmclean/triptych.nvim',
-    dependencies = {
-      'nvim-tree/nvim-web-devicons', -- optional for icons
-      'antosha417/nvim-lsp-file-operations', -- optional LSP integration
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {},
+    -- Optional dependencies
+    dependencies = { { 'nvim-mini/mini.icons', opts = {} } },
+    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+    -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+    lazy = false,
+    keymaps = {
+      [';'] = 'actions.select',
     },
-    opts = {}, -- config options here
     keys = {
-      { '<space>e', ':Triptych<CR>' },
+      { '<space>e', ':Oil<CR>' },
     },
   },
   {
