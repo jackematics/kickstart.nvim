@@ -776,7 +776,11 @@ require('lazy').setup({
       'nvim-tree/nvim-web-devicons', -- optional for icons
       'antosha417/nvim-lsp-file-operations', -- optional LSP integration
     },
-    opts = {}, -- config options here
+    opts = {
+      options = {
+        show_hidden = true,
+      },
+    }, -- config options here
     keys = {
       { '<space>e', ':Triptych<CR>' },
     },
